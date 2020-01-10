@@ -11,5 +11,9 @@
     "alexa"
   ],
   "author": "Anirudh Bellamkonda",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ask-sdk-core": "^2.7.0",
+    "ask-sdk-model": "^1.25.1"
+  }
 }
