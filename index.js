@@ -26,11 +26,11 @@ const LaunchRequestHandler = {
 
 //implement custom handlers
 const AddIntentHandler = {
-    canHandle() {
+    canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'AddIntent';
     },
-    handle() {
+    handle(handlerInput) {
         let speechText = '';
         let displayText = '';
         let intent = handlerInput.requestEnvelope.request.intent;
@@ -62,11 +62,11 @@ const AddIntentHandler = {
 };
 
 const SubtractIntentHandler = {
-    canHandle() {
+    canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'SubtractIntent';
     },
-    handle() {
+    handle(handlerInput) {
         let speechText = '';
         let displayText = '';
         let intent = handlerInput.requestEnvelope.request.intent;
@@ -77,6 +77,70 @@ const SubtractIntentHandler = {
             // Perform operation
             let result = parseInt(secondNumber) - parseInt(firstNumber);
             speechText = `The result of ${secondNumber} minus ${firstNumber} is ${result}`;
+            displayText = `${result}`;
+            return handlerInput.responseBuilder
+                .speak(speechText)
+                .withSimpleCard(appName, speechText)
+                .withShouldEndSession(true)
+                .getResponse();
+
+        }else {
+            // Ask for required input
+            return HelpIntentHandler.responseBuilder
+            .addDelegateDirective(intent)
+            .getResponse();
+        }
+    }
+};
+
+const MultiplyIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'MultiplyIntent';
+    },
+    handle(handlerInput) {
+        let speechText = '';
+        let displayText = '';
+        let intent = handlerInput.requestEnvelope.request.intent;
+        let firstNumber = intent.slots.firstNumber.value;
+        let secondNumber = intent.slots.secondNumber.value;
+
+        if(firstNumber && secondNumber) {
+            // Perform operation
+            let result = parseInt(secondNumber) * parseInt(firstNumber);
+            speechText = `The result of ${firstNumber} multiplied by ${secondNumber} is ${result}`;
+            displayText = `${result}`;
+            return handlerInput.responseBuilder
+                .speak(speechText)
+                .withSimpleCard(appName, speechText)
+                .withShouldEndSession(true)
+                .getResponse();
+
+        }else {
+            // Ask for required input
+            return HelpIntentHandler.responseBuilder
+            .addDelegateDirective(intent)
+            .getResponse();
+        }
+    }
+};
+
+const DivideIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'DivideIntent';
+    },
+    handle(handlerInput) {
+        let speechText = '';
+        let displayText = '';
+        let intent = handlerInput.requestEnvelope.request.intent;
+        let firstNumber = intent.slots.firstNumber.value;
+        let secondNumber = intent.slots.secondNumber.value;
+
+        if(firstNumber && secondNumber) {
+            // Perform operation
+            let result = parseFloat((parseInt(secondNumber) / parseInt(firstNumber)).toFixed(2));
+            speechText = `The result of ${secondNumber} divided by ${firstNumber} is ${result}`;
             displayText = `${result}`;
             return handlerInput.responseBuilder
                 .speak(speechText)
@@ -143,6 +207,8 @@ exports.handler = Alexa.SkillBuilders.custom()
      .addRequestHandlers(LaunchRequestHandler,
                          AddIntentHandler,
                          SubtractIntentHandler,
+                         MultiplyIntentHandler,
+                         DivideIntentHandler,
                          HelpIntentHandler,
                          CancelAndStopIntentHandler,
                          SessionEndedRequestHandler).lambda();
